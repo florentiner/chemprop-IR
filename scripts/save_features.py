@@ -83,7 +83,7 @@ def generate_and_save_features(args: Namespace):
 
     # Get features
     temp_features = []
-    for i, feats in tqdm(enumerate(features_map), total=len(data)):
+    for i, feats in enumerate(features_map):
         temp_features.append(feats)
 
         # Save temporary features every save_frequency

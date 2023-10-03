@@ -41,20 +41,18 @@ def find_similar_mols(test_smiles: List[str],
     test_data, train_data = get_data_from_smiles(test_smiles), get_data_from_smiles(train_smiles)
     train_smiles_set = set(train_smiles)
 
-    print(f'Computing {distance_measure} vectors')
     if distance_measure == 'embedding':
         assert model is not None
         test_vecs = np.array(compute_molecule_vectors(model=model, data=test_data, batch_size=batch_size))
         train_vecs = np.array(compute_molecule_vectors(model=model, data=train_data, batch_size=batch_size))
         metric = 'cosine'
     elif distance_measure == 'morgan':
-        test_vecs = np.array([morgan_binary_features_generator(smiles) for smiles in tqdm(test_smiles, total=len(test_smiles))])
-        train_vecs = np.array([morgan_binary_features_generator(smiles) for smiles in tqdm(train_smiles, total=len(train_smiles))])
+        test_vecs = np.array([morgan_binary_features_generator(smiles) for smiles in test_smiles])
+        train_vecs = np.array([morgan_binary_features_generator(smiles) for smiles in train_smiles])
         metric = 'jaccard'
     else:
         raise ValueError(f'Distance measure "{distance_measure}" not supported.')
 
-    print('Computing distances')
     distances = cdist(test_vecs, train_vecs, metric=metric)
 
     print('Finding neighbors')

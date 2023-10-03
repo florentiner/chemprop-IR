@@ -23,7 +23,6 @@ def create_fingerprints(args: Namespace, smiles: List[str] = None) -> List[Optio
     if args.gpu is not None:
         torch.cuda.set_device(args.gpu)
 
-    print('Loading training args')
     scaler, features_scaler = load_scalers(args.checkpoint_paths[0])
     train_args = load_args(args.checkpoint_paths[0])
 
@@ -32,13 +31,11 @@ def create_fingerprints(args: Namespace, smiles: List[str] = None) -> List[Optio
         if not hasattr(args, key):
             setattr(args, key, value)
 
-    print('Loading data')
     if smiles is not None:
         test_data = get_data_from_smiles(smiles=smiles, skip_invalid_smiles=False, args=args)
     else:
         test_data = get_data(path=args.test_path, args=args, use_compound_names=args.use_compound_names, skip_invalid_smiles=False)
 
-    print('Validating SMILES')
     valid_indices = [i for i in range(len(test_data)) if test_data[i].mol is not None]
     full_data = test_data
     test_data = MoleculeDataset([test_data[i] for i in valid_indices])
@@ -49,13 +46,11 @@ def create_fingerprints(args: Namespace, smiles: List[str] = None) -> List[Optio
 
     if args.use_compound_names:
         compound_names = test_data.compound_names()
-    print(f'Test size = {len(test_data):,}')
 
     # Normalize features
     if train_args.features_scaling:
         test_data.normalize_features(features_scaler)
 
-    print(f'Encoding smiles into a fingerprint vector from a single model')
     # Load model
     model = load_checkpoint(args.checkpoint_paths[0], current_args=args, cuda=args.cuda)
     if hasattr(model,'spectral_mask'):
@@ -69,7 +64,6 @@ def create_fingerprints(args: Namespace, smiles: List[str] = None) -> List[Optio
 
     # Save predictions
     assert len(test_data) == len(model_preds)
-    print(f'Saving predictions to {args.preds_path}')
 
     # Put Nones for invalid smiles
     full_preds = [None] * len(full_data)

@@ -13,10 +13,9 @@ from chemprop.data.utils import get_data, get_header
 
 def average_duplicates(args):
     """Averages duplicate data points in a dataset."""
-    print('Loading data')
+    'Loading data')
     header = get_header(args.data_path)
     data = get_data(path=args.data_path)
-    print(f'Data size = {len(data):,}')
 
     # Map SMILES string to lists of targets
     smiles_in_order = []
@@ -44,10 +43,6 @@ def average_duplicates(args):
         stds.append([np.std(task_targets) if len(task_targets) > 0 else 0.0 for task_targets in targets_by_task])
         means = [np.mean(task_targets) if len(task_targets) > 0 else None for task_targets in targets_by_task]
         new_data.append((smiles, means))
-
-    print(f'Number of duplicates = {duplicate_count:,}')
-    print(f'Duplicate standard deviation per task = {", ".join(f":{std:.4e}" for std in np.mean(stds, axis=0))}')
-    print(f'New data size = {len(new_data):,}')
 
     # Save new data
     with open(args.save_path, 'w') as f:

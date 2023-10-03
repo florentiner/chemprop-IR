@@ -46,7 +46,6 @@ ORDER = {
 
 
 def aggregate_results(ckpts_dirs: List[str], split_type: str):
-    print('Name\tMean\tStd\tNum files')
 
     ckpts_dirs.sort(key=lambda ckpts_dir: ORDER[os.path.basename(ckpts_dir)])
 
@@ -81,7 +80,6 @@ def aggregate_results(ckpts_dirs: List[str], split_type: str):
             mean, std = np.mean(results), np.std(results)
 
         # Compute results
-        print(f'{name}\t{mean}\t{std}\t{len(results)}')
 
 
 if __name__ == '__main__':

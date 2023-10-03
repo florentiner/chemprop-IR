@@ -26,7 +26,6 @@ def class_balance(data_path: str, split_type: str):
     }
 
     for i in range(10):
-        print(f'Fold {i}')
 
         # Update args
         data_name = os.path.splitext(os.path.basename(data_path))[0]
@@ -58,7 +57,6 @@ def class_balance(data_path: str, split_type: str):
 
     # Mean and std across folds
     for split_name in ['train', 'val', 'test']:
-        print(f'Average class sizes for {split_name}')
 
         mean_class_sizes, std_class_sizes = np.mean(all_class_sizes[split_name], axis=0), np.std(all_class_sizes[split_name], axis=0)
 

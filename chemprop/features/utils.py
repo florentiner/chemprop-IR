@@ -34,7 +34,6 @@ def load_features(path: str) -> np.ndarray:
     :return: A 2D numpy array of size (num_molecules, features_size) containing the features.
     """
     extension = os.path.splitext(path)[1]
-
     if extension == '.npz':
         features = np.load(path)['features']
     elif extension == '.npy':
@@ -49,5 +48,4 @@ def load_features(path: str) -> np.ndarray:
             features = np.array([np.squeeze(np.array(feat.todense())) for feat in pickle.load(f)])
     else:
         raise ValueError(f'Features path extension {extension} not supported.')
-
     return features

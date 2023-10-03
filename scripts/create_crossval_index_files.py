@@ -27,7 +27,6 @@ def create_crossval_indices(args: Namespace):
                 test_index_sets.append([train, val, test])
             pickle.dump(index_sets, valf)
             pickle.dump(test_index_sets, testf)
-        print(i, index_sets, test_index_sets)
         for j in range(len(index_sets)):
             with open(os.path.join(args.save_dir, 'mayr', f'{i}_{j}_opt.pkl'), 'wb') as valf, open(os.path.join(args.save_dir, 'mayr', f'{i}_{j}_test.pkl'), 'wb') as testf:
                 pickle.dump(index_sets[j], valf)

@@ -114,7 +114,7 @@ def morgan_similarity(smiles_1: List[str], smiles_2: List[str], radius: int, sam
 
     sample_num_pairs = len(sample_smiles_1) * len(sample_smiles_2)
 
-    for smile_1, smile_2 in tqdm(product(sample_smiles_1, sample_smiles_2), total=sample_num_pairs):
+    for smile_1, smile_2 in product(sample_smiles_1, sample_smiles_2):
         mol_1, mol_2 = Chem.MolFromSmiles(smile_1), Chem.MolFromSmiles(smile_2)
         fp_1, fp_2 = AllChem.GetMorganFingerprint(mol_1, radius), AllChem.GetMorganFingerprint(mol_2, radius)
         similarity = DataStructs.TanimotoSimilarity(fp_1, fp_2)

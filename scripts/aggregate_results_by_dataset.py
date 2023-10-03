@@ -47,14 +47,9 @@ def aggregate_results_by_dataset(dataset: str, ckpt_dir: str, split_type: str):
                     print(f'Invalid path "{path}"')
 
     # Print results
-    print('\t'.join(EXPERIMENTS))
 
     max_num_folds = max(len(res) for res in results.values())
 
-    for i in range(max_num_folds):
-        for experiment in EXPERIMENTS:
-            print(results[experiment][i] if i < len(results[experiment]) else '', end='\t')
-        print()
 
 
 if __name__ == '__main__':

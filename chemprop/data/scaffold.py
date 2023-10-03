@@ -36,7 +36,7 @@ def scaffold_to_smiles(mols: Union[List[str], List[Chem.Mol]],
     :return: A dictionary mapping each unique scaffold to all smiles (or smiles indices) which have that scaffold.
     """
     scaffolds = defaultdict(set)
-    for i, mol in tqdm(enumerate(mols), total=len(mols)):
+    for i, mol in enumerate(mols):
         scaffold = generate_scaffold(mol)
         if use_indices:
             scaffolds[scaffold].add(i)

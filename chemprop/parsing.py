@@ -240,16 +240,16 @@ def update_checkpoint_args(args: Namespace):
         raise ValueError(f'Failed to find any model checkpoints in directory "{args.checkpoint_dir}"')
 
 
-def modify_predict_args(args: Namespace):
+def modify_predict_args(args: Namespace, model_path:str):
     """
     Modifies and validates predicting args in place.
 
     :param args: Arguments.
     """
-    assert args.test_path
-    assert args.preds_path
-    assert args.checkpoint_dir is not None or args.checkpoint_path is not None or args.checkpoint_paths is not None
-
+    # assert args.test_path
+    # assert args.preds_path
+    # assert args.checkpoint_dir is not None or args.checkpoint_path is not None or args.checkpoint_paths is not None
+    args.checkpoint_dir = model_path
     update_checkpoint_args(args)
 
     args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -257,16 +257,15 @@ def modify_predict_args(args: Namespace):
     if args.cuda and args.gpu is not None:
         args.device = f'cuda:{args.gpu}'
     else: args.device = 'cpu'
-
     # Create directory for preds path
-    makedirs(args.preds_path, isfile=True)
+    #makedirs(args.preds_path, isfile=True)
 
 
-def parse_predict_args() -> Namespace:
+def parse_predict_args(model_path:str) -> Namespace:
     parser = ArgumentParser()
     add_predict_args(parser)
     args = parser.parse_args()
-    modify_predict_args(args)
+    modify_predict_args(args, model_path)
 
     return args
 

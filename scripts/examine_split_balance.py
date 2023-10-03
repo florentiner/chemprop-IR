@@ -78,7 +78,6 @@ def examine_split_balance(split_type: str):
             'num_failures': num_failures
         })
 
-    pprint(results)
 
 
 if __name__ == '__main__':

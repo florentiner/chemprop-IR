@@ -106,7 +106,6 @@ def load_checkpoint(path: str,
                   f'of shape {loaded_state_dict[param_name].shape} does not match corresponding '
                   f'model parameter of shape {model_state_dict[param_name].shape}.')
         else:
-            debug(f'Loading pretrained parameter "{param_name}".')
             pretrained_state_dict[param_name] = loaded_state_dict[param_name]
 
     # Load pretrained weights
@@ -154,7 +153,6 @@ def load_frzn_mpn(model: torch.nn,
                   f'of shape {loaded_state_dict[param_name].shape} does not match corresponding '
                   f'model parameter of shape {model_state_dict[param_name].shape}.')
         else:
-            debug(f'Loading pretrained parameter "{param_name}".')
             model_state_dict[param_name] = loaded_state_dict[param_name]
 
     # Load pretrained weights

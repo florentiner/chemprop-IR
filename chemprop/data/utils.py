@@ -81,11 +81,15 @@ def filter_invalid_smiles(data: MoleculeDataset) -> MoleculeDataset:
                             if datapoint.smiles != '' and datapoint.mol is not None
                             and datapoint.mol.GetNumHeavyAtoms() > 0])
 
+def get_feature_ar(feature_type):
+    encode_dict = {'gas':0, 'liquid':0, 'CCl4':0, 'KBr':0, 'nujolmull':0}
+    encode_dict[feature_type] = 1
+    return np.array(list(encode_dict.values()))
 
-def get_data(path: str,
-             skip_invalid_smiles: bool = True,
+def get_data(skip_invalid_smiles: bool = True,
              args: Namespace = None,
-             features_path: List[str] = None,
+             feature_type: str = 'gas',
+             smiles: str = 'CCCCCC',
              max_data_size: int = None,
              use_compound_names: bool = None,
              logger: Logger = None) -> MoleculeDataset:
@@ -107,7 +111,6 @@ def get_data(path: str,
 
     if args is not None:
         # Prefer explicit function arguments but default to args if not provided
-        features_path = features_path if features_path is not None else args.features_path
         max_data_size = max_data_size if max_data_size is not None else args.max_data_size
         use_compound_names = use_compound_names if use_compound_names is not None else args.use_compound_names
     else:
@@ -116,41 +119,15 @@ def get_data(path: str,
     max_data_size = max_data_size or float('inf')
 
     # Load features
-    if features_path is not None:
-        features_data = []
-        for feat_path in features_path:
-            features_data.append(load_features(feat_path))  # each is num_data x num_features
-        features_data = np.concatenate(features_data, axis=1)
-    else:
-        features_data = None
+    features_data = get_feature_ar(feature_type)
 
-    skip_smiles = set()
-
-    # Load data
-    with open(path) as f:
-        reader = csv.reader(f)
-        next(reader)  # skip header
-
-        lines = []
-        for line in reader:
-            smiles = line[0]
-
-            if smiles in skip_smiles:
-                continue
-
-            lines.append(line)
-
-            if len(lines) >= max_data_size:
-                break
-
-        data = MoleculeDataset([
+    data = MoleculeDataset([
             MoleculeDatapoint(
-                line=line,
+                line=smiles,
                 args=args,
-                features=features_data[i] if features_data is not None else None,
+                features=features_data if features_data is not None else None,
                 use_compound_names=use_compound_names
-            ) for i, line in tqdm(enumerate(lines), total=len(lines))
-        ])
+            )])
 
     # Filter out invalid SMILES
     if skip_invalid_smiles:
@@ -159,7 +136,6 @@ def get_data(path: str,
 
         if len(data) < original_data_len:
             debug(f'Warning: {original_data_len - len(data)} SMILES are invalid.')
-
     if data.data[0].features is not None:
         args.features_dim = len(data.data[0].features)
 
@@ -382,7 +358,7 @@ def validate_data(data_path: str) -> Set[str]:
         errors.add('First row is a SMILES string instead of a header.')
 
     # Validate smiles
-    for smile in tqdm(smiles, total=len(smiles)):
+    for smile in smiles:
         mol = Chem.MolFromSmiles(smile)
         if mol is None:
             errors.add('Data includes an invalid SMILES.')
